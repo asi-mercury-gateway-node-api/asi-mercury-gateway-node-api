@@ -2,154 +2,77 @@
 
 **Arybit Super Intelligence (ASI) — Mercury Platform**
 
-The ASI Mercury Gateway Node API is the central application gateway for Arybit Mercury. It provides authenticated routing, request orchestration, and integration between the Mercury user interface and backend services, including authentication, geospatial processing, and persistence.
+The ASI Mercury Gateway Node API is the controlled application entry point for the Arybit Mercury platform. It provides authenticated application routing and request orchestration between the Mercury user interface and the platform's application services.
 
-## Overview
+The Gateway exposes two principal application namespaces:
 
-The gateway serves as the primary API entry point for the Mercury platform, coordinating communication between platform components while maintaining consistent authentication, authorization, and service access patterns.
+- **`/geoaltersense/`** — GeoAlterSense application and geospatial API routing.
+- **`/core/`** — CORE application and API routing.
 
-## Core Responsibilities
+The Gateway is responsible for controlled application access, namespace routing, and coordination of incoming application requests.
 
-- **API Gateway:** Centralized entry point for Mercury application requests.
-- **Authentication:** Integration with identity and authentication services.
-- **Request Orchestration:** Coordinates communication between backend services.
-- **Geospatial Integration:** Routes requests to geospatial processing services.
-- **Persistence Integration:** Coordinates access to platform data and persistence services.
-- **Security:** Provides a structured boundary for authenticated service communication.
+It does **not** own or replace the underlying user identity systems, database infrastructure, or geospatial processing workloads. These responsibilities remain within their respective platform services.
 
-## Architecture
+## 1. Service URLs
+
+### Production Target
+
+The production Gateway endpoint is:
 
 ```text
-                 MERCURY UI
-                      |
-                      v
-          ASI MERCURY GATEWAY NODE API
-                      |
-          +-----------+-----------+
-          |           |           |
-          v           v           v
-     AUTH SERVICE  GEO SERVICE  PERSISTENCE
-          |           |           |
-          +-----------+-----------+
-                      |
-                      v
-               MERCURY PLATFORM
+https://asi-mercury-gateway-node-api.arybit.co.ke/
 ```
 
-## Technology
+### Local Development
 
-The gateway is designed around a Node.js API architecture.
+The local development endpoint is:
 
-Core technology and implementation details should be documented as the project evolves.
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (LTS recommended)
-- npm
-- Git
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/asi-mercury-gateway-node-api.git
-cd asi-mercury-gateway-node-api
+```text
+https://127.0.0.1:8443/
 ```
 
-### Install Dependencies
+The local TLS proxy publishes exactly one listener:
 
-```bash
-npm install
+```text
+127.0.0.1:8443
 ```
 
-### Environment Configuration
+All local HTTPS application traffic is exposed through this listener.
 
-Create a `.env` file in the project root.
+### Application Namespaces
 
-```env
-NODE_ENV=development
-PORT=3000
+| Namespace | Responsibility |
+|---|---|
+| `/geoaltersense/` | GeoAlterSense application and geospatial API routing |
+| `/core/` | CORE application and API routing |
 
-# Authentication service
-AUTH_SERVICE_URL=
+Both namespaces are exposed through the Gateway, providing a unified and controlled entry point into the Mercury application environment.
 
-# Geospatial service
-GEO_SERVICE_URL=
+## 2. Architectural Responsibility
 
-# Persistence service
-PERSISTENCE_SERVICE_URL=
+The ASI Mercury Gateway Node API operates as an application-layer gateway.
 
-# Security configuration
-JWT_SECRET=
-```
+Its responsibilities include:
 
-Never commit secrets, credentials, or production environment variables to version control.
+- Exposing the supported Mercury application namespaces.
+- Routing incoming requests to their designated application services.
+- Providing a controlled entry point for application traffic.
+- Coordinating communication between the Mercury UI and backend application services.
+- Supporting secure application access through the platform's authentication and authorization integrations.
 
-### Run the Application
+The Gateway maintains clear service boundaries and delegates specialized responsibilities to the appropriate backend components.
 
-The execution command depends on the scripts configured in `package.json`.
+**Service ownership boundaries:**
 
-Typical development command:
+- **Identity and Authentication:** Owned by the designated identity and authentication services.
+- **Database and Persistence:** Owned by the platform's persistence infrastructure.
+- **Geospatial Processing:** Owned by the GeoAlterSense and associated geospatial processing services.
+- **Application Routing:** Managed by the ASI Mercury Gateway Node API.
 
-```bash
-npm run dev
-```
-
-Typical production command:
-
-```bash
-npm start
-```
-
-## API Documentation
-
-API endpoints and request/response contracts will be documented here as they are implemented.
-
-Recommended documentation sections:
-
-- Authentication endpoints
-- Gateway routing endpoints
-- Geospatial service endpoints
-- Persistence endpoints
-- Health and readiness endpoints
-
-## Security
-
-Security is a core responsibility of the gateway.
-
-Implementation guidelines:
-
-- Enforce authentication on protected routes.
-- Apply authorization checks where required.
-- Validate incoming requests.
-- Protect sensitive environment variables.
-- Use HTTPS in production.
-- Implement appropriate rate limiting.
-- Avoid exposing internal service credentials.
-- Maintain structured security and application logs.
-
-## Development Guidelines
-
-- Keep service integrations modular.
-- Maintain consistent API response structures.
-- Validate request payloads.
-- Document new endpoints.
-- Include tests for critical gateway functionality.
-- Keep dependencies updated.
-
-## Project Status
-
-**Development:** Active project development.
-
-Features, integrations, and API contracts are subject to implementation and revision.
-
-## License
-
-License information will be added when the project's distribution and licensing model is finalized.
+This separation preserves modularity, reduces infrastructure coupling, and allows individual Mercury services to evolve independently.
 
 ---
 
 **ASI Mercury Gateway Node API**  
-*Arybit Super Intelligence (ASI)*  
-*Powering the Mercury platform through secure, orchestrated service connectivity.*
+Arybit Super Intelligence (ASI)  
+*The controlled application gateway for the Mercury platform.*
